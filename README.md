@@ -10,6 +10,13 @@ Pengguna bisa mengatur **URL**, **nama aplikasi**, dan **ikon aplikasi**.
 4. Kirim gambar ikon (atau `/skip` untuk ikon otomatis)
 5. Tunggu, bot mengirim file `.apk`
 
+## Fitur HTML/ZIP (`/html`)
+Kirim file `.html` atau `.zip` (harus ada `index.html`, maks 20 MB), lalu pilih:
+- **Jadikan APK** - file website dibundel di dalam APK (bisa jalan offline).
+- **Deploy ke Website** - website di-deploy ke Vercel dan bot mengirim link-nya.
+  Wajib isi `VERCEL_TOKEN` di `.env` (buat di https://vercel.com/account/tokens).
+  Hanya untuk website statis (HTML/CSS/JS), bukan PHP/Node.
+
 ## Instalasi
 
 > Bot ini butuh server/VPS yang berjalan terus (bukan Vercel/serverless),
