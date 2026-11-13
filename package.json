@@ -1,0 +1,13 @@
+{
+  "name": "web2apk-bot",
+  "version": "1.0.0",
+  "description": "Bot Telegram: ubah website jadi APK (WebView) dengan ikon & nama custom",
+  "main": "index.js",
+  "scripts": { "start": "node index.js" },
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "sharp": "^0.33.5",
+    "telegraf": "^4.16.3"
+  }
+}
