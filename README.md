@@ -1,45 +1,38 @@
-# Bot Telegram Web2APK
+# WEB2APK — Versi Web (aktif 24 jam)
 
-Bot Telegram (Node.js) yang mengubah website menjadi APK Android (WebView).
-Pengguna bisa mengatur **URL**, **nama aplikasi**, dan **ikon aplikasi**.
+Bot Telegram yang berjalan di **Vercel** (webhook) + website kontrol dengan tombol **ON/OFF**.
+Proses build APK dikerjakan oleh **GitHub Actions**, jadi tidak butuh VPS yang bisa mati.
 
-## Cara pakai bot
-1. `/web2apk`
-2. Kirim URL website
-3. Kirim nama aplikasi
-4. Kirim gambar ikon (atau `/skip` untuk ikon otomatis)
-5. Tunggu, bot mengirim file `.apk`
-
-## Fitur HTML/ZIP (`/html`)
-Kirim file `.html` atau `.zip` (harus ada `index.html`, maks 20 MB), lalu pilih:
-- **Jadikan APK** - file website dibundel di dalam APK (bisa jalan offline).
-- **Deploy ke Website** - website di-deploy ke Vercel dan bot mengirim link-nya.
-  Wajib isi `VERCEL_TOKEN` di `.env` (buat di https://vercel.com/account/tokens).
-  Hanya untuk website statis (HTML/CSS/JS), bukan PHP/Node.
-
-## Instalasi
-
-> Bot ini butuh server/VPS yang berjalan terus (bukan Vercel/serverless),
-> minimal RAM 2 GB.
-
-### Opsi A - Docker (paling mudah, sudah termasuk JDK + Android SDK)
-```bash
-cp .env.example .env      # isi BOT_TOKEN
-docker build -t web2apk-bot .
-docker run -d --restart=always --name web2apk --env-file .env -v gradle-cache:/home/gradle/.gradle web2apk-bot
+```
+Telegram ──webhook──▶ Vercel (web/)  ──dispatch──▶ GitHub Actions (builder-repo/)
+                         │                                  │ build APK
+                         └─ website ON/OFF + FAQ            └──▶ kirim APK langsung ke Telegram
 ```
 
-### Opsi B - Manual (Ubuntu/Debian VPS)
-Butuh: Node.js 18+, JDK 17, Gradle 8.x, Android SDK (platform android-34, build-tools 34.0.0).
-```bash
-npm install
-cp .env.example .env      # isi BOT_TOKEN, ANDROID_HOME, GRADLE_BIN
-npm start
-```
+## Isi
+- `web/` — project Next.js (website + webhook bot) → deploy ke Vercel
+- `builder-repo/` — isi repo GitHub (private) yang membangun APK
+
+## Langkah setup
+1. **Buat bot** di @BotFather. Disarankan token **baru**, terpisah dari bot VPS
+   (satu bot tidak bisa memakai webhook dan polling sekaligus).
+2. **Repo builder**: buat repo GitHub *private*, upload **isi** folder `builder-repo/`
+   (termasuk `.github/`) ke root repo, branch `main`.
+   Lalu Settings → Secrets and variables → Actions → New secret:
+   `TELEGRAM_BOT_TOKEN` = token bot.
+3. **GitHub token**: Settings → Developer settings → Personal access tokens.
+   Classic: centang `repo` + `workflow`. (Fine-grained: akses repo builder, Actions = Read and write.)
+4. **Deploy `web/` ke Vercel** (Root Directory = `web`), isi Environment Variables
+   sesuai `web/.env.example`:
+   `BOT_TOKEN`, `ADMIN_PASSWORD`, `GITHUB_TOKEN`, `GITHUB_REPO` (mis. `gilang/web2apk-builder`).
+5. **Redis (sangat disarankan)**: Vercel → Storage/Marketplace → **Upstash Redis** → connect ke project.
+   Dipakai untuk menyimpan sesi percakapan (URL, nama, dll.) karena serverless tidak punya memori tetap.
+6. (Opsional) `VERCEL_TOKEN` (+ `VERCEL_TEAM_ID`) untuk fitur **Deploy HTML/ZIP**.
+7. Redeploy, buka website, masukkan `ADMIN_PASSWORD`, tekan **ON**. Selesai — coba `/start` di bot.
 
 ## Catatan
-- Build pertama lebih lama karena Gradle mengunduh dependensi; build berikutnya cepat.
-- APK yang dihasilkan bertipe debug-signed, bisa langsung diinstal di HP.
-  Untuk rilis Play Store, tambahkan konfigurasi signing sendiri di `template/app/build.gradle`.
-- Gambar tampilan /start ada di `assets/start.png` (ganti file ini untuk mengubah gambarnya).
-- Build diantrikan satu per satu agar server tidak kehabisan memori.
+- **ON** = mendaftarkan webhook ke Telegram, **OFF** = menghapusnya (bot berhenti merespons).
+  Pesan yang masuk saat OFF diabaikan ketika bot dinyalakan lagi.
+- Tombol ON/OFF dilindungi `ADMIN_PASSWORD` — pakai password yang kuat.
+- Batas: file dari Telegram maks 20 MB; build ±3–8 menit; GitHub Actions gratis 2.000 menit/bulan untuk repo private.
+- APK bertipe debug-signed (bisa dipasang langsung, belum untuk Play Store).
