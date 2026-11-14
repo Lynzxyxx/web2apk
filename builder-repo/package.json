@@ -1,1 +1,0 @@
-{ "name": "web2apk-builder", "private": true, "version": "1.0.0", "dependencies": { "sharp": "^0.33.5" } }
