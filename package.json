@@ -1,1 +1,15 @@
-{ "name": "web2apk-builder", "private": true, "version": "1.0.0", "dependencies": { "sharp": "^0.33.5" } }
+{
+  "name": "web2apk-pro",
+  "version": "2.0.0",
+  "description": "Bot Telegram + dashboard web: ubah website, HTML, ZIP, dan file lain jadi APK",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "adm-zip": "^0.5.16",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "sharp": "^0.33.5",
+    "telegraf": "^4.16.3"
+  }
+}

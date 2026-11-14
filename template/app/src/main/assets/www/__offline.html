@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tidak ada koneksi</title>
+<style>
+html,body{margin:0;height:100%;background:#0b0f0c;color:#e9fff0;font-family:system-ui,sans-serif}
+.b{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px}
+.i{font-size:64px}h1{margin:12px 0 6px;font-size:22px}p{margin:0 0 22px;color:#8fb59a}
+button{background:#1fb83a;color:#fff;border:0;border-radius:999px;padding:12px 28px;font-size:16px;font-weight:700}
+</style></head><body><div class="b">
+<div class="i">📡</div><h1>Tidak ada koneksi</h1>
+<p>Periksa internet kamu lalu coba lagi.</p>
+<button onclick="retry()">Coba lagi</button></div>
+<script>function retry(){var u=new URLSearchParams(location.search).get('u');if(u)location.replace(u);else history.back();}</script>
+</body></html>

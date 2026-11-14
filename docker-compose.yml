@@ -1,0 +1,12 @@
+services:
+  web2apk:
+    build: .
+    restart: always          # otomatis hidup lagi jika crash atau server reboot
+    env_file: .env
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data:/app/data               # menyimpan status ON/OFF dan statistik
+      - gradle-cache:/gradle-cache     # cache Gradle supaya build berikutnya cepat
+volumes:
+  gradle-cache:

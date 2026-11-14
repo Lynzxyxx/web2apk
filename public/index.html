@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WEB2APK — Ubah Website jadi APK</title>
+<meta name="description" content="Bot Telegram yang mengubah website, HTML, ZIP, dan file lain menjadi aplikasi Android (APK).">
+<link rel="icon" href="/start.png">
+<style>
+:root{--bg:#030806;--card:#0b1510;--line:#143a1d;--g:#35f04a;--g2:#1fb83a;--txt:#e9fff0;--mut:#8fb59a;--red:#ff5b5b;--warn:#ffcf4d}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(1200px 600px at 50% -10%,#0d2a14 0,var(--bg) 60%);color:var(--txt);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.55;min-height:100vh}
+main{max-width:860px;margin:0 auto;padding:32px 18px 48px}
+section{margin-top:44px}
+h1{font-size:clamp(2.4rem,8vw,3.6rem);margin:12px 0 4px;letter-spacing:.06em;color:#fff;text-shadow:0 0 24px rgba(53,240,74,.55)}
+h2{font-size:1.35rem;margin:0 0 16px}
+.hero{text-align:center}
+.logo{width:180px;height:180px;border-radius:50%;box-shadow:0 0 0 2px var(--g2),0 0 50px rgba(53,240,74,.45);background:#000;max-width:60vw;height:auto}
+.tag{color:var(--mut);margin:0 auto;max-width:540px}
+.panel{margin-top:32px;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:26px 20px;text-align:center;box-shadow:0 0 40px rgba(53,240,74,.08)}
+.status{display:flex;align-items:center;justify-content:center;gap:10px;font-weight:700;margin-bottom:18px}
+.dot{width:12px;height:12px;border-radius:50%;background:#555}
+.dot.on{background:var(--g);box-shadow:0 0 12px var(--g);animation:pulse 1.6s infinite}
+.dot.off{background:var(--red)}
+@keyframes pulse{50%{opacity:.4}}
+.switch{position:relative;width:200px;height:88px;border-radius:60px;border:2px solid var(--line);background:#101814;cursor:pointer;transition:.25s;color:#fff;font-weight:800;font-size:1.4rem;letter-spacing:.08em}
+.switch:disabled{opacity:.6;cursor:wait}
+.knob{position:absolute;top:8px;left:8px;width:68px;height:68px;border-radius:50%;background:#5b6a60;transition:.25s}
+.lbl{position:absolute;top:0;bottom:0;right:28px;display:flex;align-items:center}
+.switch.on{background:linear-gradient(90deg,#0f5a1c,var(--g2));border-color:var(--g);box-shadow:0 0 34px rgba(53,240,74,.5)}
+.switch.on .knob{left:calc(100% - 76px);background:#fff}
+.switch.on .lbl{right:auto;left:30px}
+.pw{display:block;margin:20px auto 0;width:min(320px,100%);padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:#07100b;color:var(--txt);font-size:1rem;text-align:center}
+.pw:focus{outline:2px solid var(--g2)}
+.msg{margin:14px 0 0;font-weight:600}
+.msg.ok{color:var(--g)}.msg.err{color:var(--red)}.msg.warn{color:var(--warn)}.msg.small{font-size:.85rem;font-weight:500}
+.stats{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:22px 0 4px}
+.stats div{background:#07100b;border:1px solid var(--line);border-radius:14px;padding:10px 18px;min-width:120px}
+.stats b{display:block;font-size:1.4rem;color:var(--g)}
+.stats span{color:var(--mut);font-size:.82rem}
+.btn{display:inline-block;margin:16px 6px 0;padding:11px 20px;border-radius:999px;border:1px solid var(--g2);color:var(--txt);text-decoration:none;font-weight:600;background:rgba(53,240,74,.08);transition:.2s}
+.btn:hover{background:rgba(53,240,74,.22);box-shadow:0 0 18px rgba(53,240,74,.35)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px}
+.card .ico{font-size:1.7rem}
+.card h3{margin:6px 0 4px;font-size:1.05rem}
+.card p{margin:0;color:var(--mut);font-size:.92rem}
+.faq details{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin-bottom:10px}
+.faq summary{cursor:pointer;font-weight:700}
+.faq details[open]{border-color:var(--g2)}
+.faq p{margin:10px 0 0;color:var(--mut)}
+.social{text-align:center}
+footer{margin-top:48px;text-align:center;color:var(--mut);font-size:.85rem}
+</style>
+</head>
+<body>
+<main>
+  <header class="hero">
+    <img class="logo" src="/start.png" alt="Logo WEB2APK" width="180" height="180">
+    <h1>WEB2APK</h1>
+    <p class="tag">Ubah website, HTML, ZIP, dan file lain jadi aplikasi Android — langsung dari Telegram.</p>
+  </header>
+
+  <section class="panel" style="margin-top:32px">
+    <div class="status"><span id="dot" class="dot"></span><span id="stext">Memuat…</span></div>
+    <button id="sw" class="switch" disabled aria-label="Nyalakan atau matikan bot"><span class="knob"></span><span id="lbl" class="lbl">…</span></button>
+    <input id="pw" class="pw" type="password" placeholder="Password admin" autocomplete="current-password">
+    <p id="msg" class="msg" hidden></p>
+    <div id="stats" class="stats" hidden>
+      <div><b id="s-built">0</b><span>APK berhasil</span></div>
+      <div><b id="s-failed">0</b><span>Gagal</span></div>
+      <div><b id="s-queue">0</b><span>Antrian build</span></div>
+      <div><b id="s-up">-</b><span>Aktif selama</span></div>
+    </div>
+    <p id="warn" class="msg warn small" hidden></p>
+    <a id="tgbtn" class="btn" href="#" target="_blank" rel="noreferrer" hidden>💬 Buka bot di Telegram</a>
+  </section>
+
+  <section><h2>✨ Fitur</h2><div id="features" class="grid"></div></section>
+  <section id="faq-sec"><h2>❓ FAQ</h2><div id="faq" class="faq"></div></section>
+  <section><h2>📞 Hubungi Admin</h2><div id="social" class="social"></div></section>
+  <footer>© <span id="yr"></span> WEB2APK</footer>
+</main>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+let st = null, busy = false;
+
+function fmt(sec) {
+  const d = Math.floor(sec / 86400), h = Math.floor((sec % 86400) / 3600), m = Math.floor((sec % 3600) / 60);
+  return d ? d + 'h ' + h + 'j' : h ? h + 'j ' + m + 'm' : m + 'm';
+}
+function showMsg(type, text) {
+  const m = $('#msg');
+  m.hidden = !text; m.textContent = text || ''; m.className = 'msg ' + (type || '');
+}
+
+function render() {
+  const ready = st && st.ok;
+  const on = ready && st.running;
+  $('#dot').className = 'dot ' + (ready ? (on ? 'on' : 'off') : '');
+  $('#stext').textContent = !st ? 'Memuat…' : !ready ? 'Gagal memuat status' : on ? 'Bot AKTIF' : 'Bot NONAKTIF';
+  const sw = $('#sw');
+  sw.className = 'switch' + (on ? ' on' : '');
+  sw.disabled = busy || !ready;
+  sw.setAttribute('aria-pressed', on ? 'true' : 'false');
+  $('#lbl').textContent = busy ? '…' : on ? 'ON' : 'OFF';
+  $('#stats').hidden = !ready;
+  if (ready) {
+    $('#s-built').textContent = st.built;
+    $('#s-failed').textContent = st.failed;
+    $('#s-queue').textContent = st.queue;
+    $('#s-up').textContent = on ? fmt(st.uptime) : '-';
+    const w = [];
+    if (!st.tokenSet) w.push('BOT_TOKEN belum diisi di file .env.');
+    if (!st.adminSet) w.push('ADMIN_PASSWORD belum diisi di file .env.');
+    if (st.error) w.push('Error terakhir: ' + st.error);
+    $('#warn').hidden = !w.length; $('#warn').textContent = w.join(' ');
+    const tg = $('#tgbtn');
+    tg.hidden = !st.username;
+    if (st.username) { tg.href = 'https://t.me/' + st.username; tg.textContent = '💬 Buka @' + st.username + ' di Telegram'; }
+  }
+}
+
+async function load() {
+  try { st = await (await fetch('/api/status', { cache: 'no-store' })).json(); }
+  catch (e) { st = { ok: false }; }
+  render();
+}
+
+async function toggle() {
+  const pw = $('#pw').value;
+  if (!pw) return showMsg('err', 'Masukkan password admin dulu.');
+  const turningOn = !st.running;
+  busy = true; showMsg('', ''); render();
+  try {
+    const r = await fetch('/api/toggle', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: turningOn ? 'on' : 'off', password: pw }),
+    });
+    const j = await r.json();
+    if (!j.ok) throw new Error(j.error || 'Gagal.');
+    sessionStorage.setItem('w2a_pw', pw);
+    showMsg('ok', turningOn ? 'Bot diaktifkan!' : 'Bot dimatikan.');
+  } catch (e) { showMsg('err', e.message); }
+  busy = false;
+  await load();
+}
+
+async function content() {
+  try {
+    const c = await (await fetch('/api/content')).json();
+    c.features.forEach((f) => {
+      const d = el('div', 'card');
+      d.append(el('div', 'ico', f.icon), el('h3', '', f.title), el('p', '', f.desc));
+      $('#features').append(d);
+    });
+    c.faq.forEach((f) => {
+      const d = el('details');
+      d.append(el('summary', '', f.q), el('p', '', f.a));
+      $('#faq').append(d);
+    });
+    [['📸 Instagram', c.social.instagram], ['🎵 TikTok', c.social.tiktok]].forEach(([label, s]) => {
+      const a = el('a', 'btn', label + ' · ' + s.handle);
+      a.href = s.url; a.target = '_blank'; a.rel = 'noreferrer';
+      $('#social').append(a);
+    });
+  } catch (e) {}
+}
+
+$('#sw').addEventListener('click', toggle);
+$('#pw').value = sessionStorage.getItem('w2a_pw') || '';
+$('#yr').textContent = new Date().getFullYear();
+content(); load(); setInterval(load, 8000);
+</script>
+</body>
+</html>
